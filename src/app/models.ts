@@ -9,7 +9,8 @@ const userSchema = new Schema<IUser>({
     type: String,
     enum: ['user', 'designer'],
     default: 'user'
-  }
+  },
+  refresh_tokens: [{ type: String }]
   }
 );
 
