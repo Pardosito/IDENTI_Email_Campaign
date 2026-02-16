@@ -8,37 +8,42 @@ const userSchema = new Schema<IUser>({
   role: {
     type: String,
     enum: ['user', 'designer'],
-    default: 'user'
+    default: 'user',
   },
-  refresh_tokens: [{ type: String }]
-  }
-);
+  refresh_tokens: [{ type: String }],
+});
 
 export const User = model<IUser>('User', userSchema);
 
 const contactSchema = new Schema<IContact>({
   name: { type: String, required: true },
-  email: { type: String, required: true, unique: true }
+  email: { type: String, required: true, unique: true },
 });
 
-export const Contact = model<IContact>("Contact", contactSchema);
+export const Contact = model<IContact>('Contact', contactSchema);
 
 const templateSchema = new Schema<ITemplate>({
   name: { type: String, required: true, unique: true },
   content: { type: String, required: true },
-  preview: { type: String, default: "https://t4.ftcdn.net/jpg/06/57/37/01/360_F_657370150_pdNeG5pjI976ZasVbKN9VqH1rfoykdYU.jpg"}
+  preview: {
+    type: String,
+    default:
+      'https://t4.ftcdn.net/jpg/06/57/37/01/360_F_657370150_pdNeG5pjI976ZasVbKN9VqH1rfoykdYU.jpg',
+  },
 });
 
-export const Template = model<ITemplate>("Template", templateSchema);
+export const Template = model<ITemplate>('Template', templateSchema);
 
 const campaignSchema = new mongoose.Schema({
   name: { type: String, required: true },
   templateId: { type: mongoose.Schema.Types.ObjectId, ref: 'Template' },
-  contactList: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Contact'
-  }],
+  contactList: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Contact',
+    },
+  ],
   scheduledDate: { type: Date, default: Date.now },
 });
 
-export const Campaing = model<ICampaign>("Campaign", campaignSchema);
+export const Campaing = model<ICampaign>('Campaign', campaignSchema);

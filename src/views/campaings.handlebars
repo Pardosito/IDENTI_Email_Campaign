@@ -1,86 +1,91 @@
-<body id="campaigns-page">
+<body id='campaigns-page'>
   <nav>
-    <div class="button" onclick="location.href='/'"><span>Home</span></div>
-    <div class="button active"><span>Campaña</span></div>
-    </nav>
+    <div class='button' onclick="location.href='/'"><span>Home</span></div>
+    <div class='button active'><span>Campaña</span></div>
+  </nav>
 
-  <div id="main">
-    <div class="content-header">
+  <div id='main'>
+    <div class='content-header'>
       <h2>Mis Campañas</h2>
-      <button class="btn-primary" id="newCampaignBtn">+ Nueva Campaña</button>
+      <button class='btn-primary' id='newCampaignBtn'>+ Nueva Campaña</button>
     </div>
 
-    <div class="campaign-list">
+    <div class='campaign-list'>
       <p>No hay campañas recientes.</p>
     </div>
   </div>
 
-  <div id="campaignModal" class="modal full-screen-modal">
-    <div class="modal-content">
+  <div id='campaignModal' class='modal full-screen-modal'>
+    <div class='modal-content'>
 
-      <div class="modal-header">
-        <div class="steps-indicator">
-            <span class="step active" id="step1-indicator">1. Plantilla</span>
-            <span class="step" id="step2-indicator">2. Editar</span>
-            <span class="step" id="step3-indicator">3. Destinatarios</span>
+      <div class='modal-header'>
+        <div class='steps-indicator'>
+          <span class='step active' id='step1-indicator'>1. Plantilla</span>
+          <span class='step' id='step2-indicator'>2. Editar</span>
+          <span class='step' id='step3-indicator'>3. Destinatarios</span>
         </div>
-        <span class="close">&times;</span>
+        <span class='close'>&times;</span>
       </div>
 
-      <div id="step1" class="wizard-step">
+      <div id='step1' class='wizard-step'>
         <h3>Elige una plantilla</h3>
-        <div class="template-grid">
+        <div class='template-grid'>
           {{#each templates}}
-          <div class="template-card" onclick="selectTemplate('{{this._id}}', `{{this.content}}`)">
-            <img src="{{this.preview}}" alt="{{this.name}}">
-            <p>{{this.name}}</p>
-          </div>
+            <div class='template-card' onclick="selectTemplate('{{this._id}}', `{{this.content}}`)">
+              <img src='{{this.preview}}' alt='{{this.name}}' />
+              <p>{{this.name}}</p>
+            </div>
           {{/each}}
         </div>
       </div>
 
-      <div id="step2" class="wizard-step" style="display:none;">
-        <div class="editor-container">
-          <div class="editor-controls">
+      <div id='step2' class='wizard-step' style='display:none;'>
+        <div class='editor-container'>
+          <div class='editor-controls'>
             <h3>Editar Contenido</h3>
-            <div class="form-group">
-                <label>Título de la Campaña</label>
-                <input type="text" id="campaignName" placeholder="Ej: Venta de Verano">
+            <div class='form-group'>
+              <label>Título de la Campaña</label>
+              <input type='text' id='campaignName' placeholder='Ej: Venta de Verano' />
             </div>
 
-            <div class="form-group">
-                <label>Mensaje Principal</label>
-                <textarea id="emailBody" rows="5" placeholder="Escribe tu mensaje..." oninput="updatePreview()"></textarea>
+            <div class='form-group'>
+              <label>Mensaje Principal</label>
+              <textarea
+                id='emailBody'
+                rows='5'
+                placeholder='Escribe tu mensaje...'
+                oninput='updatePreview()'
+              ></textarea>
             </div>
 
-            <div class="wizard-buttons">
-                <button class="btn-secondary" onclick="goToStep(1)">Atrás</button>
-                <button class="btn-primary" onclick="goToStep(3)">Siguiente</button>
+            <div class='wizard-buttons'>
+              <button class='btn-secondary' onclick='goToStep(1)'>Atrás</button>
+              <button class='btn-primary' onclick='goToStep(3)'>Siguiente</button>
             </div>
           </div>
 
-          <div class="preview-container">
+          <div class='preview-container'>
             <label>Vista Previa (En vivo)</label>
-            <iframe id="livePreviewFrame" frameborder="0"></iframe>
+            <iframe id='livePreviewFrame' frameborder='0'></iframe>
           </div>
         </div>
       </div>
 
-      <div id="step3" class="wizard-step" style="display:none;">
+      <div id='step3' class='wizard-step' style='display:none;'>
         <h3>Seleccionar Destinatarios</h3>
-        <div class="contacts-selection-list">
-            <label><input type="checkbox" id="selectAll"> Seleccionar Todos</label>
-            <hr>
-            {{#each contacts}}
-            <div class="contact-item">
-                <input type="checkbox" class="contact-checkbox" value="{{this._id}}">
-                <span>{{this.name}} ({{this.email}})</span>
+        <div class='contacts-selection-list'>
+          <label><input type='checkbox' id='selectAll' /> Seleccionar Todos</label>
+          <hr />
+          {{#each contacts}}
+            <div class='contact-item'>
+              <input type='checkbox' class='contact-checkbox' value='{{this._id}}' />
+              <span>{{this.name}} ({{this.email}})</span>
             </div>
-            {{/each}}
+          {{/each}}
         </div>
-        <div class="wizard-buttons">
-            <button class="btn-secondary" onclick="goToStep(2)">Atrás</button>
-            <button class="btn-success" onclick="sendCampaign()">ENVIAR CAMPAÑA</button>
+        <div class='wizard-buttons'>
+          <button class='btn-secondary' onclick='goToStep(2)'>Atrás</button>
+          <button class='btn-success' onclick='sendCampaign()'>ENVIAR CAMPAÑA</button>
         </div>
       </div>
 
@@ -88,194 +93,114 @@
   </div>
 
   <script>
-    // STATE
-    let currentTemplateMJML = "";
-    let currentTemplateId = "";
-
-    // DOM ELEMENTS
-    const modal = document.getElementById('campaignModal');
-    const iframe = document.getElementById('livePreviewFrame');
-
-    // 1. OPEN MODAL
-    document.getElementById('newCampaignBtn').addEventListener('click', () => {
-        modal.style.display = 'flex';
-        goToStep(1);
-    });
-
-    document.querySelector('.close').addEventListener('click', () => {
-        modal.style.display = 'none';
-    });
-
-    // 2. WIZARD NAVIGATION
-    function goToStep(stepNumber) {
-        // Hide all steps
-        document.querySelectorAll('.wizard-step').forEach(el => el.style.display = 'none');
-        document.querySelectorAll('.step').forEach(el => el.classList.remove('active'));
-
-        // Show current
-        document.getElementById(`step${stepNumber}`).style.display = 'block';
-        document.getElementById(`step${stepNumber}-indicator`).classList.add('active');
-    }
-
-    // 3. SELECT TEMPLATE
-    function selectTemplate(id, mjmlContent) {
-        currentTemplateId = id;
-        currentTemplateMJML = mjmlContent; // Store the raw MJML
-
-        // Pre-fill the editor preview
-        updatePreview();
-        goToStep(2);
-    }
-
-    // 4. LIVE PREVIEW LOGIC
-    let timeout = null;
-    function updatePreview() {
-        const userText = document.getElementById('emailBody').value || "Escribe tu texto aquí...";
-
-        // SIMPLE REPLACEMENT STRATEGY:
-        // We assume the template has a placeholder like {{BODY_TEXT}}
-        // OR we inject the text into a specific mj-text tag for this demo.
-        // For a real app, you'd parse the MJML. Here is a simple injection:
-
-        let modifiedMJML = currentTemplateMJML;
-
-        // If template has specific placeholder
-        if(modifiedMJML.includes('{{BODY_TEXT}}')) {
-            modifiedMJML = modifiedMJML.replace('{{BODY_TEXT}}', userText);
-        } else {
-            // Fallback: Just replace the first mj-text content (Dirty but works for demo)
-            // Ideally, your templates in DB should have {{BODY_TEXT}} inside them.
-             modifiedMJML = modifiedMJML.replace(
-                /<mj-text[^>]*>(.*?)<\/mj-text>/s,
-                `<mj-text font-size="16px" color="#333">${userText}</mj-text>`
-            );
-        }
-
-        // Debounce the API call (wait 500ms after typing stops)
-        clearTimeout(timeout);
-        timeout = setTimeout(async () => {
-            try {
-                const res = await fetch('/api/render-preview', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ mjml: modifiedMJML })
-                });
-                const html = await res.text();
-
-                // Write HTML to iframe
-                const doc = iframe.contentWindow.document;
-                doc.open();
-                doc.write(html);
-                doc.close();
-            } catch (err) {
-                console.error("Preview error", err);
-            }
-        }, 500);
-    }
-
-    // 5. SEND CAMPAIGN
-    async function sendCampaign() {
-        const campaignName = document.getElementById('campaignName').value;
-        if(!campaignName) return alert("Ponle un nombre a la campaña");
-
-        // Get selected contacts
-        const selectedContacts = Array.from(document.querySelectorAll('.contact-checkbox:checked'))
-                                      .map(cb => cb.value);
-
-        if(selectedContacts.length === 0) return alert("Selecciona al menos un contacto");
-
-        const payload = {
-            name: campaignName,
-            templateId: currentTemplateId,
-            contactList: selectedContacts,
-            // You might want to send the *modified* MJML too if you want to save the specific text
-            customContent: document.getElementById('emailBody').value
-        };
-
-        try {
-            const res = await fetch('/api/campaigns', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify(payload)
-            });
-            if(res.ok) {
-                alert("¡Campaña enviada con éxito!");
-                location.reload();
-            } else {
-                alert("Error al enviar");
-            }
-        } catch(e) {
-            console.error(e);
-        }
-    }
+    // STATE let currentTemplateMJML = ""; let currentTemplateId = ""; // DOM ELEMENTS const modal =
+    document.getElementById('campaignModal'); const iframe =
+    document.getElementById('livePreviewFrame'); // 1. OPEN MODAL
+    document.getElementById('newCampaignBtn').addEventListener('click', () => { modal.style.display
+    = 'flex'; goToStep(1); }); document.querySelector('.close').addEventListener('click', () => {
+    modal.style.display = 'none'; }); // 2. WIZARD NAVIGATION function goToStep(stepNumber) { //
+    Hide all steps document.querySelectorAll('.wizard-step').forEach(el => el.style.display =
+    'none'); document.querySelectorAll('.step').forEach(el => el.classList.remove('active')); //
+    Show current document.getElementById(`step${stepNumber}`).style.display = 'block';
+    document.getElementById(`step${stepNumber}-indicator`).classList.add('active'); } // 3. SELECT
+    TEMPLATE function selectTemplate(id, mjmlContent) { currentTemplateId = id; currentTemplateMJML
+    = mjmlContent; // Store the raw MJML // Pre-fill the editor preview updatePreview();
+    goToStep(2); } // 4. LIVE PREVIEW LOGIC let timeout = null; function updatePreview() { const
+    userText = document.getElementById('emailBody').value || "Escribe tu texto aquí..."; // SIMPLE
+    REPLACEMENT STRATEGY: // We assume the template has a placeholder like
+    {{BODY_TEXT}}
+    // OR we inject the text into a specific mj-text tag for this demo. // For a real app, you'd
+    parse the MJML. Here is a simple injection: let modifiedMJML = currentTemplateMJML; // If
+    template has specific placeholder if(modifiedMJML.includes('{{BODY_TEXT}}')) { modifiedMJML =
+    modifiedMJML.replace('{{BODY_TEXT}}', userText); } else { // Fallback: Just replace the first
+    mj-text content (Dirty but works for demo) // Ideally, your templates in DB should have
+    {{BODY_TEXT}}
+    inside them. modifiedMJML = modifiedMJML.replace( /<mj-text[^>]*>(.*?)<\/mj-text>/s, `<mj-text
+    font-size="16px" color="#333">${userText}</mj-text>` ); } // Debounce the API call (wait 500ms
+    after typing stops) clearTimeout(timeout); timeout = setTimeout(async () => { try { const res =
+    await fetch('/api/render-preview', { method: 'POST', headers: {'Content-Type':
+    'application/json'}, body: JSON.stringify({ mjml: modifiedMJML }) }); const html = await
+    res.text(); // Write HTML to iframe const doc = iframe.contentWindow.document; doc.open();
+    doc.write(html); doc.close(); } catch (err) { console.error("Preview error", err); } }, 500); }
+    // 5. SEND CAMPAIGN async function sendCampaign() { const campaignName =
+    document.getElementById('campaignName').value; if(!campaignName) return alert("Ponle un nombre a
+    la campaña"); // Get selected contacts const selectedContacts =
+    Array.from(document.querySelectorAll('.contact-checkbox:checked')) .map(cb => cb.value);
+    if(selectedContacts.length === 0) return alert("Selecciona al menos un contacto"); const payload
+    = { name: campaignName, templateId: currentTemplateId, contactList: selectedContacts, // You
+    might want to send the *modified* MJML too if you want to save the specific text customContent:
+    document.getElementById('emailBody').value }; try { const res = await fetch('/api/campaigns', {
+    method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload) });
+    if(res.ok) { alert("¡Campaña enviada con éxito!"); location.reload(); } else { alert("Error al
+    enviar"); } } catch(e) { console.error(e); } }
   </script>
 
   <style>
     /* Add these specific styles for the Split View */
     .full-screen-modal .modal-content {
-        max-width: 900px;
-        height: 80vh;
-        display: flex;
-        flex-direction: column;
+      max-width: 900px;
+      height: 80vh;
+      display: flex;
+      flex-direction: column;
     }
 
     .editor-container {
-        display: flex;
-        gap: 20px;
-        height: 100%;
-        margin-top: 10px;
+      display: flex;
+      gap: 20px;
+      height: 100%;
+      margin-top: 10px;
     }
 
     .editor-controls {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
     }
 
     .preview-container {
-        flex: 1;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        overflow: hidden;
-        background: #fff;
+      flex: 1;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #fff;
     }
 
     #livePreviewFrame {
-        width: 100%;
-        height: 100%;
+      width: 100%;
+      height: 100%;
     }
 
     .template-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-        gap: 15px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 15px;
     }
 
     .template-card {
-        border: 1px solid #eee;
-        padding: 10px;
-        cursor: pointer;
-        transition: transform 0.2s;
+      border: 1px solid #eee;
+      padding: 10px;
+      cursor: pointer;
+      transition: transform 0.2s;
     }
     .template-card:hover {
-        transform: scale(1.05);
-        border-color: #f37e2c;
+      transform: scale(1.05);
+      border-color: #f37e2c;
     }
     .template-card img {
-        width: 100%;
-        height: 150px;
-        object-fit: cover;
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
     }
 
     .steps-indicator {
-        display: flex;
-        gap: 15px;
-        font-weight: bold;
-        color: #ccc;
+      display: flex;
+      gap: 15px;
+      font-weight: bold;
+      color: #ccc;
     }
     .step.active {
-        color: #1f295a;
-        border-bottom: 2px solid #f37e2c;
+      color: #1f295a;
+      border-bottom: 2px solid #f37e2c;
     }
   </style>
 </body>
