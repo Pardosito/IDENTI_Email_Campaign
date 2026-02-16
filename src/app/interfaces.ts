@@ -5,6 +5,7 @@ export interface IUser {
     email: string;
     password: string;
     role: string;
+    refresh_tokens?: string[];
 }
 
 export interface IContact {
