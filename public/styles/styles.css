@@ -3,21 +3,21 @@
 /* #F37E2C */
 
 @font-face {
-  font-family: "Altone";
+  font-family: 'Altone';
   src: url(../assets/fonts/Altone-Regular.ttf);
   font-weight: 300;
   font-style: normal;
 }
 
 @font-face {
-  font-family: "Altone";
+  font-family: 'Altone';
   src: url(../assets/fonts/Altone-Bold.ttf);
   font-weight: 600;
   font-style: normal;
 }
 
 html {
-  font-family: "Altone", sans-serif;
+  font-family: 'Altone', sans-serif;
 }
 
 body {
@@ -66,7 +66,7 @@ input {
   transition: border-color 0.3s ease;
 }
 
-input[type="submit"] {
+input[type='submit'] {
   width: 100%;
   background-color: #f37e2c;
   color: white;

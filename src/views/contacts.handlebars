@@ -1,28 +1,28 @@
-<body id="contacts">
+<body id='contacts'>
   <nav>
-    <div class="button" onclick="location.href='/home'">
+    <div class='button' onclick="location.href='/home'">
       <span>Campaña</span>
     </div>
-    <div class="button" onclick="location.href='/history'">
+    <div class='button' onclick="location.href='/history'">
       <span>Historial</span>
     </div>
-    <div class="button active" onclick="location.href='/contacts'">
+    <div class='button active' onclick="location.href='/contacts'">
       <span>Contactos</span>
     </div>
-    <div class="button" onclick="location.href='/templates'">
+    <div class='button' onclick="location.href='/templates'">
       <span>Plantillas</span>
     </div>
-    <button class="button" id="logout">Cerrar Sesión</button>
+    <button class='button' id='logout'>Cerrar Sesión</button>
   </nav>
 
-  <div id="main">
-    <div class="content-header">
+  <div id='main'>
+    <div class='content-header'>
       <h2>Gestión de Contactos</h2>
-      <button class="btn-primary" id="addContactBtn">+ Nuevo Contacto</button>
+      <button class='btn-primary' id='addContactBtn'>+ Nuevo Contacto</button>
     </div>
 
-    <div class="contacts-container">
-      <table class="contacts-table">
+    <div class='contacts-container'>
+      <table class='contacts-table'>
         <thead>
           <tr>
             <th>Nombre</th>
@@ -30,209 +30,91 @@
             <th>Acciones</th>
           </tr>
         </thead>
-        <tbody id="contactsTableBody">
+        <tbody id='contactsTableBody'>
           <!-- Contacts will be loaded here dynamically -->
         </tbody>
       </table>
-      <div id="emptyState" style="display: none;">
+      <div id='emptyState' style='display: none;'>
         <p>No hay contactos registrados. ¡Agrega tu primer contacto!</p>
       </div>
     </div>
   </div>
 
   <!-- Modal for Add/Edit Contact -->
-  <div id="contactModal" class="modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3 id="modalTitle">Nuevo Contacto</h3>
-        <span class="close">&times;</span>
+  <div id='contactModal' class='modal'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h3 id='modalTitle'>Nuevo Contacto</h3>
+        <span class='close'>&times;</span>
       </div>
-      <form id="contactForm">
-        <input type="hidden" id="contactId" value="">
-        <div class="form-group">
-          <label for="contactName">Nombre:</label>
-          <input type="text" id="contactName" name="contactName" required>
+      <form id='contactForm'>
+        <input type='hidden' id='contactId' value='' />
+        <div class='form-group'>
+          <label for='contactName'>Nombre:</label>
+          <input type='text' id='contactName' name='contactName' required />
         </div>
-        <div class="form-group">
-          <label for="contactEmail">Email:</label>
-          <input type="email" id="contactEmail" name="contactEmail" required>
+        <div class='form-group'>
+          <label for='contactEmail'>Email:</label>
+          <input type='email' id='contactEmail' name='contactEmail' required />
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn-secondary" id="cancelBtn">Cancelar</button>
-          <button type="submit" class="btn-primary" id="saveBtn">Guardar</button>
+        <div class='modal-footer'>
+          <button type='button' class='btn-secondary' id='cancelBtn'>Cancelar</button>
+          <button type='submit' class='btn-primary' id='saveBtn'>Guardar</button>
         </div>
       </form>
     </div>
   </div>
 
   <script>
-    // Modal elements
-    const modal = document.getElementById('contactModal');
-    const addContactBtn = document.getElementById('addContactBtn');
-    const closeBtn = document.querySelector('.close');
-    const cancelBtn = document.getElementById('cancelBtn');
-    const contactForm = document.getElementById('contactForm');
-    const modalTitle = document.getElementById('modalTitle');
-    const contactsTableBody = document.getElementById('contactsTableBody');
-    const emptyState = document.getElementById('emptyState');
-
-    let isEditMode = false;
-
-    // Open modal for adding new contact
-    addContactBtn.addEventListener('click', () => {
-      isEditMode = false;
-      modalTitle.textContent = 'Nuevo Contacto';
-      contactForm.reset();
-      document.getElementById('contactId').value = '';
-      modal.style.display = 'flex';
-    });
-
-    // Close modal
-    closeBtn.addEventListener('click', () => {
-      modal.style.display = 'none';
-    });
-
-    cancelBtn.addEventListener('click', () => {
-      modal.style.display = 'none';
-    });
-
-    // Close modal when clicking outside
-    window.addEventListener('click', (e) => {
-      if (e.target === modal) {
-        modal.style.display = 'none';
-      }
-    });
-
-    // Load contacts on page load
-    async function loadContacts() {
-      try {
-        const response = await fetch('/api/contacts');
-        const data = await response.json();
-
-        if (data.contacts && data.contacts.length > 0) {
-          displayContacts(data.contacts);
-          emptyState.style.display = 'none';
-        } else {
-          contactsTableBody.innerHTML = '';
-          emptyState.style.display = 'block';
-        }
-      } catch (error) {
-        console.error('Error loading contacts:', error);
-        alert('Error al cargar los contactos');
-      }
-    }
-
-    // Display contacts in table
-    function displayContacts(contacts) {
-      contactsTableBody.innerHTML = '';
-      contacts.forEach(contact => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-          <td>${contact.name}</td>
-          <td>${contact.email}</td>
-          <td class="actions">
-            <button class="btn-edit" onclick="editContact('${contact._id}', '${contact.name}', '${contact.email}')">
-              Editar
-            </button>
-            <button class="btn-delete" onclick="deleteContact('${contact._id}', '${contact.name}')">
-              Eliminar
-            </button>
-          </td>
-        `;
-        contactsTableBody.appendChild(row);
-      });
-    }
-
-    // Submit form (Create or Update)
-    contactForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-
-      const contactId = document.getElementById('contactId').value;
-      const contactName = document.getElementById('contactName').value;
-      const contactEmail = document.getElementById('contactEmail').value;
-
-      try {
-        let response;
-        if (isEditMode && contactId) {
-          // Update contact
-          response = await fetch(`/api/contacts/${contactId}`, {
-            method: 'PUT',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ contactName, contactEmail })
-          });
-        } else {
-          // Create contact
-          response = await fetch('/api/contacts', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ contactName, contactEmail })
-          });
-        }
-
-        const data = await response.json();
-
-        if (response.ok) {
-          alert(data.message);
-          modal.style.display = 'none';
-          contactForm.reset();
-          loadContacts();
-        } else {
-          alert(data.message || 'Error al guardar el contacto');
-        }
-      } catch (error) {
-        console.error('Error:', error);
-        alert('Error al guardar el contacto');
-      }
-    });
-
-    // Edit contact
-    function editContact(id, name, email) {
-      isEditMode = true;
-      modalTitle.textContent = 'Editar Contacto';
-      document.getElementById('contactId').value = id;
-      document.getElementById('contactName').value = name;
-      document.getElementById('contactEmail').value = email;
-      modal.style.display = 'flex';
-    }
-
-    // Delete contact
-    async function deleteContact(id, name) {
-      if (confirm(`¿Estás seguro de eliminar el contacto "${name}"?`)) {
-        try {
-          const response = await fetch(`/api/contacts/${id}`, {
-            method: 'DELETE'
-          });
-
-          const data = await response.json();
-
-          if (response.ok) {
-            alert(data.message);
-            loadContacts();
-          } else {
-            alert(data.message || 'Error al eliminar el contacto');
-          }
-        } catch (error) {
-          console.error('Error:', error);
-          alert('Error al eliminar el contacto');
-        }
-      }
-    }
-
-    // Logout
-    document.getElementById('logout').addEventListener('click', () => {
-      if (confirm('¿Estás seguro de cerrar sesión?')) {
-        // Clear any stored tokens
-        localStorage.clear();
-        sessionStorage.clear();
-        window.location.href = '/login';
-      }
-    });
-
-    // Load contacts when page loads
+    // Modal elements const modal = document.getElementById('contactModal'); const addContactBtn =
+    document.getElementById('addContactBtn'); const closeBtn = document.querySelector('.close');
+    const cancelBtn = document.getElementById('cancelBtn'); const contactForm =
+    document.getElementById('contactForm'); const modalTitle =
+    document.getElementById('modalTitle'); const contactsTableBody =
+    document.getElementById('contactsTableBody'); const emptyState =
+    document.getElementById('emptyState'); let isEditMode = false; // Open modal for adding new
+    contact addContactBtn.addEventListener('click', () => { isEditMode = false;
+    modalTitle.textContent = 'Nuevo Contacto'; contactForm.reset();
+    document.getElementById('contactId').value = ''; modal.style.display = 'flex'; }); // Close
+    modal closeBtn.addEventListener('click', () => { modal.style.display = 'none'; });
+    cancelBtn.addEventListener('click', () => { modal.style.display = 'none'; }); // Close modal
+    when clicking outside window.addEventListener('click', (e) => { if (e.target === modal) {
+    modal.style.display = 'none'; } }); // Load contacts on page load async function loadContacts()
+    { try { const response = await fetch('/api/contacts'); const data = await response.json(); if
+    (data.contacts && data.contacts.length > 0) { displayContacts(data.contacts);
+    emptyState.style.display = 'none'; } else { contactsTableBody.innerHTML = '';
+    emptyState.style.display = 'block'; } } catch (error) { console.error('Error loading contacts:',
+    error); alert('Error al cargar los contactos'); } } // Display contacts in table function
+    displayContacts(contacts) { contactsTableBody.innerHTML = ''; contacts.forEach(contact => {
+    const row = document.createElement('tr'); row.innerHTML = ` <td>${contact.name}</td>
+    <td>${contact.email}</td> <td class="actions"> <button class="btn-edit"
+    onclick="editContact('${contact._id}', '${contact.name}', '${contact.email}')"> Editar </button>
+    <button class="btn-delete" onclick="deleteContact('${contact._id}', '${contact.name}')">
+    Eliminar </button> </td> `; contactsTableBody.appendChild(row); }); } // Submit form (Create or
+    Update) contactForm.addEventListener('submit', async (e) => { e.preventDefault(); const
+    contactId = document.getElementById('contactId').value; const contactName =
+    document.getElementById('contactName').value; const contactEmail =
+    document.getElementById('contactEmail').value; try { let response; if (isEditMode && contactId)
+    { // Update contact response = await fetch(`/api/contacts/${contactId}`, { method: 'PUT',
+    headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contactName,
+    contactEmail }) }); } else { // Create contact response = await fetch('/api/contacts', { method:
+    'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contactName,
+    contactEmail }) }); } const data = await response.json(); if (response.ok) {
+    alert(data.message); modal.style.display = 'none'; contactForm.reset(); loadContacts(); } else {
+    alert(data.message || 'Error al guardar el contacto'); } } catch (error) {
+    console.error('Error:', error); alert('Error al guardar el contacto'); } }); // Edit contact
+    function editContact(id, name, email) { isEditMode = true; modalTitle.textContent = 'Editar
+    Contacto'; document.getElementById('contactId').value = id;
+    document.getElementById('contactName').value = name;
+    document.getElementById('contactEmail').value = email; modal.style.display = 'flex'; } // Delete
+    contact async function deleteContact(id, name) { if (confirm(`¿Estás seguro de eliminar el
+    contacto "${name}"?`)) { try { const response = await fetch(`/api/contacts/${id}`, { method:
+    'DELETE' }); const data = await response.json(); if (response.ok) { alert(data.message);
+    loadContacts(); } else { alert(data.message || 'Error al eliminar el contacto'); } } catch
+    (error) { console.error('Error:', error); alert('Error al eliminar el contacto'); } } } //
+    Logout document.getElementById('logout').addEventListener('click', () => { if (confirm('¿Estás
+    seguro de cerrar sesión?')) { // Clear any stored tokens localStorage.clear();
+    sessionStorage.clear(); window.location.href = '/login'; } }); // Load contacts when page loads
     loadContacts();
   </script>
 </body>
